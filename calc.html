@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardbinding Cost Calculator</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header img {
+            max-width: 150px;
+            height: auto;
+        }
+        
+        .panel {
+            flex: 1 1 100%;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .calculator-panel {
+            max-width: 500px;
+        }
+        
+        .calculator-panel h1 {
+            color: #800000;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .form-group select, .form-group input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .result {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #800000;
+        }
+        
+        .instructions-panel {
+            max-width: 500px;
+        }
+        
+        .instructions-panel .instructions {
+            padding: 20px;
+            background: linear-gradient(to bottom, #800000, #b22222);
+            border-radius: 8px;
+            color: #fff;
+        }
+        
+        .instructions h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .instructions p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        .image-placeholder {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        
+        .image-placeholder div {
+            width: 45%;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .image-placeholder img {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .panel {
+                flex: 1 1 100%;
+            }
+            
+            .image-placeholder {
+                flex-direction: column;
+            }
+            
+            .image-placeholder div {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="logo.jpg" alt="Company Logo">
+        </div>
+        <div class="panel calculator-panel">
+            <div class="result" id="result">
+                Total Cost: 0 PHP
+            </div>
+            <h1>Hardbinding Cost Calculator</h1>
+            <div class="form-group">
+                <label for="paper-size">Paper Size</label>
+                <select id="paper-size" onchange="calculateCost()">
+                    <option value="175">A4</option>
+                    <option value="150">Short</option>
+                    <option value="190">Long</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="engrave-front">Front Engraving (per line)</label>
+                <input type="number" id="engrave-front" min="0" value="0" oninput="calculateCost()">
+            </div>
+            <div class="form-group">
+                <label for="engrave-side">Side Engraving (per line)</label>
+                <input type="number" id="engrave-side" min="0" value="0" oninput="calculateCost()">
+            </div>
+            <div class="form-group">
+                <label for="page-count">Page Count</label>
+                <input type="number" id="page-count" min="0" value="150" oninput="calculateCost()">
+            </div>
+            <div class="form-group">
+                <label for="rush-order">Rush Order</label>
+                <select id="rush-order" onchange="calculateCost()">
+                    <option value="1">No</option>
+                    <option value="2">Times 2</option>
+                    <option value="3">Times 3</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="copies">Number of Copies</label>
+                <input type="number" id="copies" min="1" value="1" oninput="calculateCost()">
+            </div>
+        </div>
+        <div class="panel instructions-panel">
+            <div class="instructions">
+                <h2>Instructions</h2>
+                <p>Enter needed details to get an estimate of your book price. Note: front engraving and side engraving are optional but each line in the engraved cover would cost around 20 PHP per line.</p>
+                <div class="image-placeholder">
+                    <div>
+                        <img src="face.jpg" alt="Front Engraving Sample">
+                        <p>Front Engraving Sample</p>
+                    </div>
+                    <div>
+                        <img src="side.jpg" alt="Side Engraving Sample">
+                        <p>Side Engraving Sample</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateCost() {
+            const paperSize = parseFloat(document.getElementById('paper-size').value);
+            const engraveFront = parseInt(document.getElementById('engrave-front').value) * 20;
+            const engraveSide = parseInt(document.getElementById('engrave-side').value) * 20;
+            const pageCount = parseInt(document.getElementById('page-count').value);
+            const rushOrder = parseFloat(document.getElementById('rush-order').value);
+            const copies = parseInt(document.getElementById('copies').value);
+
+            let pageCountCost = 0;
+            if (pageCount >= 170 && pageCount <= 200) {
+                pageCountCost = 20;
+            } else if (pageCount >= 220 && pageCount <= 250) {
+                pageCountCost = 75;
+            }
+
+            let totalCost = (paperSize + engraveFront + engraveSide + pageCountCost) * rushOrder;
+            totalCost *= copies;
+
+            document.getElementById('result').innerHTML = `<strong>Total Cost: ${totalCost} PHP</strong>`;
+        }
+
+        // Initial calculation to set the default value
+        calculateCost();
+    </script>
+</body>
+</html>
